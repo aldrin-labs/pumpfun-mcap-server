@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pump.fun MCAP Server</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <h1>🚀 Pump.fun MCAP Server 🚀</h1>
+        <p>Monitor, Create, List, Ape, Watch King of the Hill</p>
+    </header>
+
+    <main>
+        <section id="king-section" class="dashboard-section">
+            <h2>👑 King of the Hill 👑</h2>
+            <div id="king-display" class="king-card">
+                <p>Loading king data...</p>
+            </div>
+        </section>
+
+        <section id="memecoins-section" class="dashboard-section">
+            <h2>📊 Memecoin List 📊</h2>
+            <div class="action-bar">
+                <button id="refresh-btn">Refresh List</button>
+                <button id="create-coin-btn">Create New Memecoin</button>
+            </div>
+            <div id="memecoins-list">
+                <p>Loading memecoins...</p>
+            </div>
+        </section>
+
+        <section id="create-coin-section" class="dashboard-section hidden">
+            <h2>🔨 Create New Memecoin 🔨</h2>
+            <form id="create-coin-form">
+                <div class="form-group">
+                    <label for="coin-name">Name:</label>
+                    <input type="text" id="coin-name" required>
+                </div>
+                <div class="form-group">
+                    <label for="coin-symbol">Symbol:</label>
+                    <input type="text" id="coin-symbol" required>
+                </div>
+                <div class="form-group">
+                    <label for="coin-price">Initial Price ($):</label>
+                    <input type="number" id="coin-price" step="0.000000001" min="0.000000001" required>
+                </div>
+                <div class="form-group">
+                    <label for="coin-market-cap">Initial Market Cap ($):</label>
+                    <input type="number" id="coin-market-cap" min="1" required>
+                </div>
+                <div class="form-group">
+                    <label for="coin-volume">Initial 24h Volume ($):</label>
+                    <input type="number" id="coin-volume" min="0" required>
+                </div>
+                <div class="form-group">
+                    <label for="coin-description">Description:</label>
+                    <textarea id="coin-description" rows="3" required></textarea>
+                </div>
+                <div class="form-actions">
+                    <button type="submit">Create Memecoin</button>
+                    <button type="button" id="cancel-create">Cancel</button>
+                </div>
+            </form>
+        </section>
+
+        <section id="ape-section" class="dashboard-section hidden">
+            <h2>🦍 Ape Into Memecoin 🦍</h2>
+            <form id="ape-form">
+                <div class="form-group">
+                    <label for="ape-coin-id">Selected Coin:</label>
+                    <input type="text" id="ape-coin-name" readonly>
+                    <input type="hidden" id="ape-coin-id">
+                </div>
+                <div class="form-group">
+                    <label for="ape-amount">Investment Amount ($):</label>
+                    <input type="number" id="ape-amount" min="1" required>
+                </div>
+                <div class="form-actions">
+                    <button type="submit">Ape In!</button>
+                    <button type="button" id="cancel-ape">Cancel</button>
+                </div>
+            </form>
+        </section>
+
+        <section id="investments-section" class="dashboard-section">
+            <h2>💰 Your Investments 💰</h2>
+            <div id="investments-list">
+                <p>No investments yet.</p>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2023 Pump.fun MCAP Server | Made with 💎🙌</p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>

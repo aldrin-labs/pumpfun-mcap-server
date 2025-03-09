@@ -1,0 +1,309 @@
+/* Global Styles */
+:root {
+    --primary-color: #6c5ce7;
+    --secondary-color: #00cec9;
+    --accent-color: #fdcb6e;
+    --danger-color: #e74c3c;
+    --success-color: #00b894;
+    --dark-color: #2d3436;
+    --light-color: #f5f6fa;
+    --card-bg: #ffffff;
+    --border-radius: 8px;
+    --box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    line-height: 1.6;
+    color: var(--dark-color);
+    background-color: var(--light-color);
+    padding: 0;
+    margin: 0;
+}
+
+/* Header Styles */
+header {
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    color: white;
+    text-align: center;
+    padding: 2rem 1rem;
+    margin-bottom: 2rem;
+}
+
+header h1 {
+    font-size: 2.5rem;
+    margin-bottom: 0.5rem;
+}
+
+/* Main Content */
+main {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1rem;
+}
+
+.dashboard-section {
+    background-color: var(--card-bg);
+    border-radius: var(--border-radius);
+    box-shadow: var(--box-shadow);
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.dashboard-section h2 {
+    color: var(--primary-color);
+    margin-bottom: 1rem;
+    border-bottom: 2px solid var(--secondary-color);
+    padding-bottom: 0.5rem;
+}
+
+/* King of the Hill Section */
+.king-card {
+    background: linear-gradient(135deg, #ffeaa7, #fab1a0);
+    border-radius: var(--border-radius);
+    padding: 1.5rem;
+    text-align: center;
+    box-shadow: var(--box-shadow);
+}
+
+.king-card h3 {
+    font-size: 1.8rem;
+    margin-bottom: 0.5rem;
+    color: var(--dark-color);
+}
+
+.king-details {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    margin-top: 1rem;
+}
+
+.king-detail {
+    padding: 0.5rem;
+    background-color: rgba(255, 255, 255, 0.7);
+    border-radius: var(--border-radius);
+    margin: 0.5rem;
+    min-width: 150px;
+}
+
+.king-detail h4 {
+    font-size: 0.9rem;
+    color: var(--dark-color);
+}
+
+.king-detail p {
+    font-size: 1.2rem;
+    font-weight: bold;
+}
+
+/* Memecoin List Section */
+.action-bar {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+}
+
+button {
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: var(--border-radius);
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+button:hover {
+    background-color: #5549c9;
+}
+
+#create-coin-btn {
+    background-color: var(--success-color);
+}
+
+#create-coin-btn:hover {
+    background-color: #009b7d;
+}
+
+.memecoin-card {
+    background-color: white;
+    border-radius: var(--border-radius);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    padding: 1rem;
+    margin-bottom: 1rem;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.memecoin-info {
+    flex: 1;
+    min-width: 200px;
+}
+
+.memecoin-name {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: var(--dark-color);
+}
+
+.memecoin-symbol {
+    font-size: 0.9rem;
+    color: #7f8c8d;
+    margin-bottom: 0.5rem;
+}
+
+.memecoin-description {
+    font-size: 0.9rem;
+    color: #636e72;
+    margin-bottom: 0.5rem;
+}
+
+.memecoin-stats {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-top: 0.5rem;
+}
+
+.memecoin-stat {
+    font-size: 0.8rem;
+    color: #636e72;
+}
+
+.memecoin-stat span {
+    font-weight: bold;
+    color: var(--dark-color);
+}
+
+.memecoin-actions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.ape-btn {
+    background-color: var(--accent-color);
+    color: var(--dark-color);
+}
+
+.ape-btn:hover {
+    background-color: #f0b94d;
+}
+
+/* Forms */
+.form-group {
+    margin-bottom: 1rem;
+}
+
+label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: bold;
+}
+
+input, textarea {
+    width: 100%;
+    padding: 0.5rem;
+    border: 1px solid #ddd;
+    border-radius: var(--border-radius);
+    font-size: 1rem;
+}
+
+.form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+#cancel-create, #cancel-ape {
+    background-color: #95a5a6;
+}
+
+#cancel-create:hover, #cancel-ape:hover {
+    background-color: #7f8c8d;
+}
+
+/* Investments Section */
+.investment-card {
+    background-color: white;
+    border-radius: var(--border-radius);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    padding: 1rem;
+    margin-bottom: 1rem;
+}
+
+.investment-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 0.5rem;
+}
+
+.investment-symbol {
+    font-weight: bold;
+    color: var(--primary-color);
+}
+
+.investment-date {
+    font-size: 0.8rem;
+    color: #7f8c8d;
+}
+
+.investment-details {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.investment-detail {
+    font-size: 0.9rem;
+}
+
+.investment-detail span {
+    font-weight: bold;
+}
+
+/* Utility Classes */
+.hidden {
+    display: none;
+}
+
+/* Footer */
+footer {
+    text-align: center;
+    padding: 1rem;
+    margin-top: 2rem;
+    background-color: var(--dark-color);
+    color: white;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .memecoin-card {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .memecoin-actions {
+        margin-top: 1rem;
+        width: 100%;
+        justify-content: space-between;
+    }
+    
+    .king-details {
+        flex-direction: column;
+    }
+    
+    .king-detail {
+        width: 100%;
+        margin: 0.25rem 0;
+    }
+}
