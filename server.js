@@ -1,7 +1,16 @@
-const http = require('http');
-const fs = require('fs');
+const express = require('express');
+const cors = require('cors');
+const bodyParser = require('body-parser');
 const path = require('path');
-const url = require('url');
+const fs = require('fs');
+
+// Create Express app
+const app = express();
+
+// Middleware
+app.use(cors());
+app.use(bodyParser.json());
+app.use(express.static(path.join(__dirname)));
 
 // In-memory database for memecoins
 let memecoins = [
@@ -42,193 +51,119 @@ let investments = [];
 
 // Get the king of the hill (highest market cap)
 const getKingOfTheHill = () => {
+  if (memecoins.length === 0) {
+    return null;
+  }
   return memecoins.reduce((king, coin) => 
     coin.marketCap > king.marketCap ? coin : king, memecoins[0]);
 };
 
-// Handle API requests
-const handleApiRequest = (req, res) => {
-  const parsedUrl = url.parse(req.url, true);
-  const pathname = parsedUrl.pathname;
-  const query = parsedUrl.query;
-
-  // Set CORS headers
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
-  
-  // Handle preflight requests
-  if (req.method === 'OPTIONS') {
-    res.writeHead(200);
-    res.end();
-    return;
-  }
-
-  // API endpoints
-  if (pathname === '/api/memecoins' && req.method === 'GET') {
-    // List all memecoins
-    res.writeHead(200, { 'Content-Type': 'application/json' });
-    res.end(JSON.stringify(memecoins));
-  } 
-  else if (pathname === '/api/memecoins' && req.method === 'POST') {
-    // Create a new memecoin
-    let body = '';
-    req.on('data', chunk => {
-      body += chunk.toString();
-    });
-    
-    req.on('end', () => {
-      try {
-        const newCoin = JSON.parse(body);
-        newCoin.id = memecoins.length > 0 ? Math.max(...memecoins.map(c => c.id)) + 1 : 1;
-        newCoin.createdAt = new Date().toISOString();
-        memecoins.push(newCoin);
-        
-        res.writeHead(201, { 'Content-Type': 'application/json' });
-        res.end(JSON.stringify(newCoin));
-      } catch (error) {
-        res.writeHead(400, { 'Content-Type': 'application/json' });
-        res.end(JSON.stringify({ error: 'Invalid request body' }));
-      }
-    });
-  }
-  else if (pathname.match(/\/api\/memecoins\/\d+/) && req.method === 'GET') {
-    // Get a specific memecoin
-    const id = parseInt(pathname.split('/').pop());
-    const memecoin = memecoins.find(c => c.id === id);
-    
-    if (memecoin) {
-      res.writeHead(200, { 'Content-Type': 'application/json' });
-      res.end(JSON.stringify(memecoin));
-    } else {
-      res.writeHead(404, { 'Content-Type': 'application/json' });
-      res.end(JSON.stringify({ error: 'Memecoin not found' }));
-    }
-  }
-  else if (pathname === '/api/king' && req.method === 'GET') {
-    // Get the king of the hill (highest market cap)
-    const king = getKingOfTheHill();
-    res.writeHead(200, { 'Content-Type': 'application/json' });
-    res.end(JSON.stringify(king));
-  }
-  else if (pathname === '/api/ape' && req.method === 'POST') {
-    // Invest in a memecoin
-    let body = '';
-    req.on('data', chunk => {
-      body += chunk.toString();
-    });
-    
-    req.on('end', () => {
-      try {
-        const investment = JSON.parse(body);
-        const { coinId, amount } = investment;
-        
-        const coin = memecoins.find(c => c.id === coinId);
-        if (!coin) {
-          res.writeHead(404, { 'Content-Type': 'application/json' });
-          res.end(JSON.stringify({ error: 'Memecoin not found' }));
-          return;
-        }
-        
-        // Record the investment
-        const newInvestment = {
-          id: investments.length > 0 ? Math.max(...investments.map(i => i.id)) + 1 : 1,
-          coinId,
-          coinSymbol: coin.symbol,
-          amount,
-          price: coin.price,
-          timestamp: new Date().toISOString()
-        };
-        
-        investments.push(newInvestment);
-        
-        // Simulate market impact (very simplified)
-        coin.price *= (1 + (amount / coin.marketCap) * 0.1);
-        coin.marketCap += amount;
-        coin.volume24h += amount;
-        
-        res.writeHead(201, { 'Content-Type': 'application/json' });
-        res.end(JSON.stringify(newInvestment));
-      } catch (error) {
-        res.writeHead(400, { 'Content-Type': 'application/json' });
-        res.end(JSON.stringify({ error: 'Invalid request body' }));
-      }
-    });
-  }
-  else if (pathname === '/api/investments' && req.method === 'GET') {
-    // Get all investments
-    res.writeHead(200, { 'Content-Type': 'application/json' });
-    res.end(JSON.stringify(investments));
-  }
-  else {
-    // Handle unknown API endpoints
-    res.writeHead(404, { 'Content-Type': 'application/json' });
-    res.end(JSON.stringify({ error: 'Endpoint not found' }));
-  }
-};
-
-// Serve static files
-const serveStaticFile = (res, filePath, contentType) => {
-  fs.readFile(filePath, (err, content) => {
-    if (err) {
-      if (err.code === 'ENOENT') {
-        // File not found
-        res.writeHead(404);
-        res.end('File not found');
-      } else {
-        // Server error
-        res.writeHead(500);
-        res.end(`Server Error: ${err.code}`);
-      }
-    } else {
-      // Success
-      res.writeHead(200, { 'Content-Type': contentType });
-      res.end(content, 'utf-8');
-    }
-  });
-};
-
-// Create the server
-const server = http.createServer((req, res) => {
-  const parsedUrl = url.parse(req.url, true);
-  const pathname = parsedUrl.pathname;
-  
-  // Handle API requests
-  if (pathname.startsWith('/api/')) {
-    handleApiRequest(req, res);
-    return;
-  }
-  
-  // Serve static files
-  let filePath = path.join(__dirname, pathname === '/' ? 'index.html' : pathname);
-  
-  // Determine the content type based on file extension
-  const extname = path.extname(filePath);
-  let contentType = 'text/html';
-  
-  switch (extname) {
-    case '.js':
-      contentType = 'text/javascript';
-      break;
-    case '.css':
-      contentType = 'text/css';
-      break;
-    case '.json':
-      contentType = 'application/json';
-      break;
-    case '.png':
-      contentType = 'image/png';
-      break;
-    case '.jpg':
-      contentType = 'image/jpg';
-      break;
-  }
-  
-  serveStaticFile(res, filePath, contentType);
+// API Routes
+// Get all memecoins
+app.get('/api/memecoins', (req, res) => {
+  res.json(memecoins);
 });
 
-const PORT = process.env.PORT || 3000;
+// Create a new memecoin
+app.post('/api/memecoins', (req, res) => {
+  try {
+    const { name, symbol, price, marketCap, volume24h, description } = req.body;
+    
+    // Basic validation
+    if (!name || !symbol || !price || !marketCap || !description) {
+      return res.status(400).json({ error: 'Missing required fields' });
+    }
+    
+    const newCoin = {
+      id: memecoins.length > 0 ? Math.max(...memecoins.map(c => c.id)) + 1 : 1,
+      name,
+      symbol,
+      price: parseFloat(price),
+      marketCap: parseFloat(marketCap),
+      volume24h: parseFloat(volume24h || 0),
+      description,
+      createdAt: new Date().toISOString()
+    };
+    
+    memecoins.push(newCoin);
+    res.status(201).json(newCoin);
+  } catch (error) {
+    res.status(400).json({ error: 'Invalid request body' });
+  }
+});
 
-server.listen(PORT, () => {
+// Get a specific memecoin
+app.get('/api/memecoins/:id', (req, res) => {
+  const id = parseInt(req.params.id);
+  const memecoin = memecoins.find(c => c.id === id);
+  
+  if (memecoin) {
+    res.json(memecoin);
+  } else {
+    res.status(404).json({ error: 'Memecoin not found' });
+  }
+});
+
+// Get the king of the hill
+app.get('/api/king', (req, res) => {
+  const king = getKingOfTheHill();
+  if (king) {
+    res.json(king);
+  } else {
+    res.status(404).json({ error: 'No memecoins available' });
+  }
+});
+
+// Invest in a memecoin
+app.post('/api/ape', (req, res) => {
+  try {
+    const { coinId, amount } = req.body;
+    
+    // Basic validation
+    if (!coinId || !amount || amount <= 0) {
+      return res.status(400).json({ error: 'Invalid investment data' });
+    }
+    
+    const coin = memecoins.find(c => c.id === coinId);
+    if (!coin) {
+      return res.status(404).json({ error: 'Memecoin not found' });
+    }
+    
+    // Record the investment
+    const newInvestment = {
+      id: investments.length > 0 ? Math.max(...investments.map(i => i.id)) + 1 : 1,
+      coinId,
+      coinSymbol: coin.symbol,
+      amount,
+      price: coin.price,
+      timestamp: new Date().toISOString()
+    };
+    
+    investments.push(newInvestment);
+    
+    // Simulate market impact (very simplified)
+    coin.price *= (1 + (amount / coin.marketCap) * 0.1);
+    coin.marketCap += amount;
+    coin.volume24h += amount;
+    
+    res.status(201).json(newInvestment);
+  } catch (error) {
+    res.status(400).json({ error: 'Invalid request body' });
+  }
+});
+
+// Get all investments
+app.get('/api/investments', (req, res) => {
+  res.json(investments);
+});
+
+// Serve index.html for the root route
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, 'index.html'));
+});
+
+// Start the server
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });

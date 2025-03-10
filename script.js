@@ -177,8 +177,6 @@ function hideCreateForm() {
 // Show the form to ape into a memecoin
 function showApeForm(coinId, coinName) {
     apeSection.classList.remove('hidden');
-    apeCoinId.value = coinId;
-    apeCoinName.value = coinName;
     apeForm.reset();
     apeCoinId.value = coinId;
     apeCoinName.value = coinName;
